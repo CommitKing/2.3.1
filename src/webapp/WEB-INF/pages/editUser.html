@@ -82,6 +82,8 @@
 <div class="container">
     <h1>Изменить пользователя</h1>
     <form action="/users/editUser" method="post">
+        <input type="hidden" name="id" th:value="${user.id}">
+
         <label for="username">Имя пользователя:</label>
         <input type="text" id="username" name="username" th:placeholder="${user.username}" required>
 
@@ -104,7 +106,6 @@
             <button type="submit" class="button">Сохранить</button>
             <a href="/users" class="button cancel">Отмена</a>
         </div>
-        <input type="hidden" name="id" th:value="${user.id}">
     </form>
 </div>
 

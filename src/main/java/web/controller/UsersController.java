@@ -3,18 +3,26 @@ package web.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import web.model.User;
 import web.service.UserService;
 
+import javax.validation.Valid;
+
 
 @Controller
 public class UsersController {
 
+    private final UserService userService;
+
     @Autowired
-    UserService userService;
+    public UsersController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping(value = "/users")
     public String users(Model model) {
@@ -35,13 +43,11 @@ public class UsersController {
     }
 
     @PostMapping(value = "/users/addUser")
-    public String addUser(@RequestParam(name = "username") String username,
-                          @RequestParam(name = "password") String password,
-                          @RequestParam(name = "email") String email,
-                          @RequestParam(name = "phoneNumber") String phoneNumber,
-                          @RequestParam(name = "age") int age,
-                          @RequestParam(name = "sex") String sex) {
-        User user = new User(username, password, email, phoneNumber, age, sex);
+    public String addUser(@Valid @ModelAttribute User user, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("user", user);  // Добавление пользователя обратно в модель
+            return "addUser";
+        }
         userService.save(user);
         return "redirect:/users";
     }
@@ -53,21 +59,14 @@ public class UsersController {
     }
 
     @PostMapping(value = "/users/editUser")
-    public String editUser(@RequestParam(name = "username") String username,
-                           @RequestParam(name = "password") String password,
-                           @RequestParam(name = "email") String email,
-                           @RequestParam(name = "phoneNumber") String phoneNumber,
-                           @RequestParam(name = "age") int age,
-                           @RequestParam(name = "sex") String sex,
-                           @RequestParam(name = "id") int id) {
-        User user = userService.findById(id);
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setEmail(email);
-        user.setPhone(phoneNumber);
-        user.setAge(age);
-        user.setSex(sex);
-        userService.update(user);
+    public String editUser(@Valid @ModelAttribute User user, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("user", user);
+            return "editUser";
+        }
+        User existingUser = userService.findById(user.getId());
+        existingUser = userService.updateUserInfo(user, existingUser);
+        userService.update(existingUser);
         return "redirect:/users";
     }
 }

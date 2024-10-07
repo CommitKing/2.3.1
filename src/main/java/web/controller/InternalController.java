@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class InternalController {
 
-    @GetMapping(value = "/internal")
+    @GetMapping(value = "/")
     public String internalPage() {
         return "index";
     }

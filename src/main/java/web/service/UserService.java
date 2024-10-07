@@ -14,4 +14,6 @@ public interface UserService {
     User findById(int id);
 
     List<User> getAllUsers();
+
+    User updateUserInfo(User user, User existingUser);
 }
