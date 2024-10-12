@@ -45,7 +45,7 @@ public class UsersController {
     @PostMapping(value = "/users/addUser")
     public String addUser(@Valid @ModelAttribute User user, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("user", user);  // Добавление пользователя обратно в модель
+            model.addAttribute("user", user);
             return "addUser";
         }
         userService.save(user);
